@@ -1,0 +1,36 @@
+cowsay "Bienvenido al script para tongar a los de RRobin"
+
+# checks for params
+#
+#
+#
+if [ $# -eq 0 ]; then
+    >&2 echo "Pon argumentos. No seas gañan, tienes que poner la URL a la que quieres ir."
+    exit 1
+fi
+
+url=$1
+#echo "Url $url"
+size_m=$(shuf -i 4-13 -n 1)
+size_u=$(shuf -i 4-13 -n 1)
+maquina=$(tr -dc A-Za-z0-9 </dev/urandom | head -c $size_m ; echo '')
+user=$(tr -dc A-Za-z0-9 </dev/urandom | head -c $size_u ; echo '')
+echo "Maquina = $maquina y user= $user"
+#echo "Atacando URL $1$maquina?$user"
+#curl -H "Connection: Keep-Alive" -A "Windows Installer" -vvv $1$maquina?$user
+#vamos a probar netcat
+dominio=$(echo $1 | awk -F[/:] '{print $4}')
+puerto=8080
+path=$(echo $1 | grep -Po '\w\K/\w+[^?]+')
+host=$dominio:$puerto
+echo "Atacando la URL $dominio:$puerto$path$maquina?$user con host=$host"
+{
+  printf "GET %s HTTP/1.1\r\n" "$path$maquina?$user"
+  printf "Connection: Keep-Alive\r\n"
+  printf "Accept: */*\r\n"
+  printf "User-Agent: Windows Installer\r\n"
+  printf "Host: %s\r\n" "$host"
+  printf "\r\n" 
+  printf "\r\n"
+} | nc $dominio $puerto
+
