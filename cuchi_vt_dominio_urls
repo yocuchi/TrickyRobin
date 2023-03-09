@@ -1,0 +1,25 @@
+#mirar si es un fichero o solo un dominio
+
+
+bdir=/mnt/OneDriveHernandezCFran/Code/RobinHackTool/bd/
+URLS="${bdir}ROBINURLS"
+echo "Bdir es $bdir y $URLS"
+if test -f "$1"; then
+    cowsay "$FILE es un fichero, vamos a buscar dominios dentro de el"
+    while read p; do
+	vt=$(vt domain urls $p -i=url --limit 5000| grep 8080)
+	total=$(echo "$vt" | wc -l)		
+	#echo -e "$vt"
+	echo -e "$vt" >>$URLS
+      echo "Obtenidas $total  por VT el dominio $p"
+    done <$1
+ 
+else
+cowsay "Buscando urls de dominio $1"
+ vt domain urls $1 -i=url --limit 5000 | grep 8080 >> $URLS
+fi
+
+
+sort $URLS | uniq > ${URLS}.sort
+lineas=$(wc -l $URLS) 
+echo "Fin VT. Tenemos $lineas para probar"

@@ -1,0 +1,20 @@
+cowsay "Bienvenido al script para tongar a los de RRobin"
+
+# checks for params
+#
+#
+#
+if [ $# -eq 0 ]; then
+    >&2 echo "Pon argumentos. No seas gañan, tienes que poner la URL a la que quieres ir."
+    exit 1
+fi
+
+url=$1
+#echo "Url $url"
+size_m=$(shuf -i 4-13 -n 1)
+size_u=$(shuf -i 4-13 -n 1)
+maquina=$(tr -dc A-Za-z0-9 </dev/urandom | head -c $size_m ; echo '')
+user=$(tr -dc A-Za-z0-9 </dev/urandom | head -c $size_u ; echo '')
+echo "Maquina = $maquina y user= $user"
+echo "Atacando URL $1$maquina?$user"
+curl -H "Connection: Keep-Alive" -A "Windows Installer" -vvv $1$maquina?$user
