@@ -46,14 +46,14 @@ echo $dominio >> domain_list.txt
 port_test=$(nc -w 5 -z  $dominio $puerto; echo $?)
 
 if [ $port_test -eq 0 ]; then
-   echo " Puerto abierto en $dominio $puerto. URL $dominio:$puerto$path/$maquina?$user"
+   echo " Puerto abierto en $dominio $puerto. URL $dominio:$puerto$path/$maquina=$user"
 
 start_time=$(date +%s)
 
 elapsed=$(( end_time - start_time ))
 {
-  printf "GET %s HTTP/1.1\r\n" "$path/$maquina?$user"
-  printf "Connection: Close\r\n"
+  printf "GET %s HTTP/1.1\r\n" "$path/$maquina=$user"
+  printf "Connection: Keep-Alive\r\n"
   # printf "Connection: Keep-Alive\r\n"
   printf "Accept: */*\r\n"
   printf "User-Agent: Windows Installer\r\n"
@@ -70,7 +70,7 @@ echo "NC $elapsed segs; out en /tmp/cuchi_netcat_$i Result $nc_result"
 
 
 start_time=$(date +%s)
-status=$(curl -H "Connection: Keep-Alive" -H "User-Agent: Windows Installer" -s --write-out %{http_code} http://$dominio:$puerto$path/$maquina?$user --output /tmp/Cuchi_curl_out_$i)
+status=$(curl -H "Connection: Keep-Alive" -H "User-Agent: Windows Installer" -s --write-out %{http_code} http://$dominio:$puerto$path/$maquina=$user --output /tmp/Cuchi_curl_out_$i)
 if [ $status == "202" ]; then
 color=$GREEN
 else
